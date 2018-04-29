@@ -43,8 +43,8 @@
                  (X - X)))
 
 (define tmxo5 '( (- - O)
-                 (- - O)
-                 (O - O)))
+                 (- - -)
+                 (- - -)))
 
 (define tmxo6 '( (- O O - - -)
                  (- - O X X X)
@@ -53,9 +53,9 @@
 (define tmxo7 '((- - O)
                 (- - O)
                 (- X O)
-                (X - O)
-                (X X O)
-                (O O O)))
+                (X - -)
+                (X - -)
+                (O - -)))
 
 (define tmxo8 '((- - O)
                 (- - O)
@@ -89,22 +89,50 @@
 
 (define tmx101 '((O - - - - - - - - -)
                 (- O - - - - - - - -)
-                (X X O X X X X X X X)
+                (X X O X - - X - X X)
                 (- - - O - - - - - -)
-                (X X X X O X X X X X)
-                (- - - - - O - - - -)
+                (X X - X O X X - X X)
+                (- - - - - - - - - -)
                 (- - - - - - O - - -)
-                (- - - - - - - O - -)
+                (- - - - - - - - - -)
                 (- - - - - - - - O -)
                 (- - - - - - - - - O)))
 
-(define t1 '((- - X O X O)
-             (X O - O X O)
-             (X - X X X X)
+(define t0 '((- - - - X)
+             (- - - X -)
+             (O - - O O)
+             (- - - - -)))
+
+(define t00 '((- - - X -)
+              (- - X - -)
+              (O - - O O)
+              (- - - - -)))
+
+(define t02 '((X - - - -)
+              (- X - - -)
+              (O - - O O)
+              (- - - - -)))
+
+(define t03 '((- - - - )
+              (- - - X )
+              (- O - - )
+              (- - - - )
+              (- - - X )))
+
+(define t033 '((- - - X )
+               (O O O - )
+               (- - - X )
+               (- - X X )))
+
+             
+
+(define t1 '((- O - O X O)
+             (X O X O X O)
+             (X O X X X X)
              (O X O - X -)))
 
 (define t2 '((- X O - -)
-             (- X - O X)
+             (- X - - X)
              (X X - X O)
              (- X X O X)
              (X - O O O)
@@ -181,7 +209,7 @@
 ;Functions to set an element at a given position in a matrix
 (define (setAtMatrix indexi indexj element matrix)
   (cond
-    (( or (> indexi (length matrix)) (<= indexi 0) (> indexj (length matrix)) (<= indexj 0)) #f) ;validates indexes
+    (( or (> indexi (length matrix)) (<= indexi 0) (> indexj (length (car matrix))) (<= indexj 0)) #f) ;validates indexes
     (else (setAtMatrix_aux indexi indexj element matrix))))
                   
 (define (setAtMatrix_aux indexi indexj element matrix)
@@ -275,9 +303,9 @@
 
 (define (checkVictory player matrix)
   (cond
-    ((checkVictoryRow player matrix) #t)
-    ((checkVictoryColumn player matrix) #t)
-    ((checkVictoryDiagonal player matrix) #t)
+    ((or (checkVictoryRow player matrix)
+         (checkVictoryColumn player matrix)
+         (checkVictoryDiagonal player matrix)) #t)
     (else #f)))
     
 
@@ -392,20 +420,25 @@
        (else (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) result))))
     ((equal? type 'invdiagonal)
      (cond
-       ((and (equal? (getAt lenline line) '-) (> numrows numcols))
-        (getEmpPos_aux (+ aux1 1)  type  num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ lenline (- num 1)) aux1)) result)))
-       ((and (equal? (getAt lenline line) '-) (> numcols numrows))
-        (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows aux1)) result)))
-       ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
-        (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline aux1)) result)))
-       (else (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) result))))))
+         ((and (equal? (getAt lenline line) '-) (> numrows numcols))
+          (getEmpPos_aux (+ aux1 1)  type  num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ lenline (- num 1)) aux1)) result)))
+         ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
+          (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline aux1)) result)))         
+         ((and (equal? (getAt lenline line) '-) (> numcols numrows))
+          (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows num)) result)))
+         (else
+          (cond
+            ((or (> numrows numcols) (equal? numrows numcols)) (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) result))
+            (else (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) result))))))))
+          
+
 
     
 
 
 
 
-'(row 3 5 (X X X X X -))
+;'(row 3 5 (X X X X X -))
 
 
 
@@ -473,9 +506,75 @@
          (getMostFullInvDiagonal player numinvdiagonals (countRow player (getAt numinvdiagonals invdiagonals)) (- numinvdiagonals 1) invdiagonals (getAt numinvdiagonals invdiagonals)))
     (else (getMostFullInvDiagonal player greatindex greater (- numinvdiagonals 1) invdiagonals result))))
 
+;Function that checks viability to put a token in certain place
+;(player1 user, player2 computer
+(define (checkViability player1 player2 matrix)
+  (checkViability_aux player1 player2 (getMostFullLine player1 matrix) (getMostFullLine player2 matrix) (getAvailablePositions matrix) matrix))
+
+(define (checkViability_aux player1 player2 gamep1 gamep2 avaipositions matrix)
+  (cond
+    ((and (null? gamep1) (null? gamep2)) "gameover")
+    ((null? gamep1) (getAt 1 (getAt 5 gamep2))) 
+    ((equal? (length (getAt 5 gamep1)) 1) (getAt 1 (getAt 5 gamep1)))
+    (else
+     (cond
+       ((null? gamep2) (getAt 1 (getAt 5 gamep1)))
+       ((not (null? (intersection (getAt 5 gamep1) (getAt 5 gamep2)))) (car (intersection (getAt 5 gamep1) (getAt 5 gamep2))))
+       (else (getAt 1 (getAt 5 gamep1)))))))
+
+;Function that puts the token where it is more viable
+
+(define (putToken player1 player2 matrix)
+  (cond
+    ((list? (checkViability player1 player2 matrix))
+     (setAtMatrix (car (checkViability player1 player2 matrix)) (cadr (checkViability player1 player2 matrix)) player2 matrix))
+    (else (append (list "No movements left to win") matrix))))
+     
+;turn 0 player, 1 computer
+(define (game player1 player2 matrix)
+  (game_aux player1 player2 matrix 1))
+
+(define (game_aux player1 player2 matrix turn)
+  (cond
+    ((equal? (car matrix) "No movements left to win") (pretty-print (cdr matrix) "gameover"))
+    ((checkVictory player1 matrix) (pretty-print matrix "Player wins"))
+    ((checkVictory player2 matrix) (pretty-print  matrix "Computer wins"))
+    (else
+     (cond 
+       ((zero? turn) (game_aux player1 player2 (putToken player2 player1 matrix) 1))
+       (else (game_aux player1 player2 (putToken player1 player2 matrix) 0))))))
 
 
 
-                   
+;Function that declares if an element is in a list or not
+(define (miembro ele lista)
+  (cond
+    ((null? lista) #f)
+    ((equal? (car lista) ele) #t)
+    (else (miembro ele (cdr lista)))))
+
+;Function that returns the element of intersection between two list
+(define (intersection line1 line2)
+  (cond
+    ((null? line1) '())
+    ((miembro (car line1) line2) (append (list (car line1)) (intersection (cdr line1) line2)))
+    (else (intersection (cdr line1) line2))))
+
+
+
+
+
+(define (pretty-print board condition)
+  (for ([i (length board)])
+    (for ([j (length (car board))])
+      (printf "~a\t" (list-ref (list-ref board i) j)))
+    (newline))
+  condition)
+     
+
+
+(game 'O 'X t02)
+
+                  
   
   

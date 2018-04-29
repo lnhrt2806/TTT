@@ -20,9 +20,14 @@
 (define tmxv1 '((X X X)
                 (- - -)
                 (- - -)))
-(define tmxv7 '((X X X)
+
+(define tmx   '((X - O)
+                (O X -)
+                (- O X)))
+
+(define tmxv7 '((O O X)
                 (- X -)
-                (- - X)))
+                (- - O)))
 
 
 (define tmxv2 '( (- - -)
@@ -71,6 +76,17 @@
                 (- - - - - - - - - -)
                 (- - - - - - - - - -)))
 
+(define tmx11 '((- - - - - - - - - O)
+                (- - - - - - - - O -)
+                (X X X X X X X O X X)
+                (- - - - - - O - - -)
+                (X X X X X O X X X X)
+                (- - - - O - - - - -)
+                (- - - O - - - - - -)
+                (- - O - - - - - - -)
+                (- O - - - - - - - -)
+                (O - - - - - - - - -)))
+
 (define tmx101 '((O - - - - - - - - -)
                 (- O - - - - - - - -)
                 (X X O X X X X X X X)
@@ -81,6 +97,37 @@
                 (- - - - - - - O - -)
                 (- - - - - - - - O -)
                 (- - - - - - - - - O)))
+
+(define t1 '((- - X O X O)
+             (X O - O X O)
+             (X - X X X X)
+             (O X O - X -)))
+
+(define t2 '((- X O - -)
+             (- X - O X)
+             (X X - X O)
+             (- X X O X)
+             (X - O O O)
+             (O O O - X)
+             (X - O X -)))
+
+(define t3 '((O O O X X -)
+             (O - O X - X)
+             (O X O O O X)
+             (X X X O - -)
+             (- O - - - X)
+             (O X - O X X)))
+
+(define t4 '((O O O X X -)
+             (O - O X - X)
+             (O X O O O X)
+             (X X - O - -)
+             (- O X - - X)
+             (O X - O X X)))
+
+(define tm35 '((- - - - -)
+               (- - - - -)
+               (- - - - -)))
 
 
 
@@ -97,6 +144,20 @@
     ((zero? numrows) matrix)
     ((zero? numcols) (generateMatrix_aux (- numrows 1) ininumcols ininumcols '() (append matrix (list row))))
     (else (generateMatrix_aux numrows (- numcols 1) ininumcols (append row (list '-)) matrix))))
+
+;Function that generates a test matrix
+(define (generateTestMatrix numrows numcols)
+  (cond
+    (( or (>= 2 numrows) (>= 2 numcols)
+         (<= 11 numrows) (<= 11 numcols))#f)
+    (else (generateTestMatrix_aux numrows numcols numcols '() '() ))))
+
+(define (generateTestMatrix_aux numrows numcols ininumcols row matrix)
+  (cond
+    ((zero? numrows) matrix)
+    ((zero? numcols) (generateTestMatrix_aux (- numrows 1) ininumcols ininumcols '() (append matrix (list row))))
+    (else (generateTestMatrix_aux numrows (- numcols 1) ininumcols (append row (list (list-ref '(- X O) (random 3)) )) matrix))))
+
 
 
 ;Function to get an element at a given position in a list
@@ -179,8 +240,6 @@
        (else (getNonSquareDiagonal (+ i 1) (+ j 1) indexdiag numrows numcols numdiags (append pardiag (list (getAtMatrix i j matrix))) totdiag matrix))
        ))))
      
-;(getDiagonals tm34)
-;(getDiagonals tm43)
   
 
 ;Function that gets a inverse diagonal in square or nonsquare matrix
@@ -274,14 +333,149 @@
     ((not (equal? (car row) player)) #f)
     (else (checkRow player (cdr row)))))
 
-
-
-
-(define (setRow index  ele matrix)
-  (setRow_aux index ele (length (car matrix)) matrix))
-(define (setRow_aux index ele numcols matrix)
+;Function that counts how many elements of a token  are in a row
+(define (countRow player row)
   (cond
-    ((zero? numcols) matrix)
-    (else (setRow_aux index ele (- numcols 1) (setAtMatrix index numcols ele matrix)))))                     
+    ((null? row) 0)
+    ((equal? (car row) player) (+ 1 (countRow player (cdr row))))
+    (else (+ 0 (countRow player (cdr row))))))
+
+;Function that counts how many elements different from a token  are in a row
+(define (countRowD player row)
+  (cond
+    ((null? row) 0)
+    ((equal? player 'X)
+     (cond
+       ((equal? (car row) 'O) (+ 1 (countRowD player (cdr row))))
+       (else (+ 0 (countRowD player (cdr row))))))
+    (else
+     (cond
+       ((equal? (car row) 'X) (+ 1 (countRowD player (cdr row))))
+       (else (+ 0 (countRowD player (cdr row))))))))
+
+
+
+
+;Function that returns a list with lists with the indexes of all the available positions in the matrix
+(define (getAvailablePositions matrix)
+  (getAvailablePositions_aux (length matrix) (length (car matrix)) 1 1 '() matrix))
+
+(define (getAvailablePositions_aux numrows numcols i j poslist matrix)
+  (cond
+    ((equal? i (+ numrows 1)) poslist)
+    ((equal? j (+ numcols 1)) (getAvailablePositions_aux numrows numcols (+ i 1) 1 poslist matrix))
+    ((equal? '- (getAtMatrix i j matrix)) (getAvailablePositions_aux numrows numcols i (+ j 1) (append poslist (list (list i j))) matrix))
+    (else (getAvailablePositions_aux numrows numcols i (+ j 1) poslist matrix))))
+
+;Function that returns a list with lists with the indexes of all the available positions in a line
+(define (getEmpPos line matrix)
+  (getEmpPos_aux 1 (getAt 1 line) (getAt 2 line) (getAt 4 line) (length (getAt 4 line)) (length matrix) (length (car matrix))'() ))
+(define (getEmpPos_aux aux1 type num line lenline numrows numcols result)
+  (cond
+    ((zero? lenline) result)
+    ((equal? type 'row)
+     (cond
+       ((equal? (getAt lenline line) '-) (getEmpPos_aux aux1 type num line (- lenline 1) numrows numcols (append (list (list num lenline)) result)))
+       (else (getEmpPos_aux aux1 type num line (- lenline 1) numrows numcols result))))
+    ((equal? type 'column)
+     (cond
+       ((equal? (getAt lenline line) '-) (getEmpPos_aux aux1 type num line (- lenline 1) numrows numcols (append (list (list lenline num )) result)))
+       (else (getEmpPos_aux aux1 type num line (- lenline 1) numrows numcols result))))
+    ((equal? type 'diagonal)
+     (cond
+       ((and (equal? (getAt lenline line) '-) (> numrows numcols))
+        (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows lenline)) result)))
+       ((and (equal? (getAt lenline line) '-) (> numcols numrows))
+        (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows (+ numrows (- num 1)))) result)))
+       ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
+        (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline lenline)) result)))
+       (else (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) result))))
+    ((equal? type 'invdiagonal)
+     (cond
+       ((and (equal? (getAt lenline line) '-) (> numrows numcols))
+        (getEmpPos_aux (+ aux1 1)  type  num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ lenline (- num 1)) aux1)) result)))
+       ((and (equal? (getAt lenline line) '-) (> numcols numrows))
+        (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows aux1)) result)))
+       ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
+        (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline aux1)) result)))
+       (else (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) result))))))
+
+    
+
+
+
+
+'(row 3 5 (X X X X X -))
+
+
+
+
+
+;Function that returns the type, number, quantiti of tokens and line which is closest to win
+(define (getMostFullLine player matrix)
+  (getMostFullLine_aux player matrix 0 '()))
+
+ (define (getMostFullLine_aux player matrix greater result)
+   (cond
+     ((> (getAt 3 (getMostFullRow player  1 0 (length matrix) matrix '())) greater)
+      (getMostFullLine_aux player matrix (getAt 3 (getMostFullRow player  1 0 (length matrix) matrix '())) (getMostFullRow player  1 0 (length matrix) matrix '())))
+     ((> (getAt 3 (getMostFullColumn player 1 0 (length (car matrix)) matrix '())) greater)
+      (getMostFullLine_aux player matrix (getAt 3 (getMostFullColumn player 1 0 (length (car matrix)) matrix '())) (getMostFullColumn player 1 0 (length (car matrix)) matrix '())))
+     ((> (getAt 3 (getMostFullDiagonal player 1 0 (length (getDiagonals matrix)) (getDiagonals matrix) '()))  greater)
+      (getMostFullLine_aux player matrix (getAt 3 (getMostFullDiagonal player 1 0 (length (getDiagonals matrix)) (getDiagonals matrix) '())) (getMostFullDiagonal player 1 0 (length (getDiagonals matrix)) (getDiagonals matrix) '()))) 
+     ((> (getAt 3 (getMostFullInvDiagonal player 1 0 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) greater)
+      (getMostFullLine_aux player matrix (getAt 3 (getMostFullInvDiagonal player 1 0 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) (getMostFullInvDiagonal player 1 0 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())))
+     (else
+      (cond
+        ((null? result) result)
+        (else (append result (list (getEmpPos result matrix))))))))
+  
+
+
+;Function that returns the type, number of row, quantity of tokens and row where there is more chance to win
+(define (getMostFullRow player greatindex greater numrows matrix result)
+  (cond
+    ((zero? numrows) (append (list 'row) (list greatindex greater) (list result))) 
+    ((and (> (countRow player (getAt numrows matrix)) greater) (zero? (countRowD player (getAt numrows matrix))))
+          (getMostFullRow player numrows (countRow player (getAt numrows matrix)) (- numrows 1) matrix (getAt numrows matrix)))
+    (else (getMostFullRow player greatindex greater (- numrows 1) matrix result))))
+
+
+;Function that returns the type, number of column, quantity of tokens and column where there is more chance to win
+(define (getMostFullColumn player greatindex greater numcols matrix result)
+  (cond
+    ((zero? numcols) (append (list 'column) (list greatindex greater) (list result))) 
+    ((and (> (countRow player (getColumn numcols matrix)) greater) (zero? (countRowD player (getColumn numcols matrix))))
+          (getMostFullColumn player numcols (countRow player (getColumn numcols matrix)) (- numcols 1) matrix (getColumn numcols matrix)))
+    (else (getMostFullColumn player greatindex greater (- numcols 1) matrix result))))
+
+;Function that returns the type, number of diagonal (from left to right, up to down), quantity of tokens and diagonal where there is more chance to win
+(define (getMostFullDiagonal player greatindex greater numdiagonals diagonals result)
+  (cond
+    ((not (list? (car diagonals)))
+     (cond
+       ((zero? (countRowD player diagonals)) (append (list 'diagonal) (list 1 (countRow player diagonals)  diagonals)))
+       (else (append (list 'diagonal) (list 1 0 '())))))
+    ((zero? numdiagonals) (append (list 'diagonal) (list greatindex greater) (list result)))
+    ((and (> (countRow player (getAt numdiagonals diagonals)) greater) (zero? (countRowD player(getAt numdiagonals diagonals))))
+     (getMostFullDiagonal player numdiagonals (countRow player (getAt numdiagonals diagonals)) (- numdiagonals 1) diagonals (getAt numdiagonals diagonals)))
+    (else (getMostFullDiagonal player greatindex greater (- numdiagonals 1) diagonals result))))
+
+;Function that returns the type, number of invdiagonal (from left to right, up to down), quantity of tokens and invdiagonal where there is more chance to win
+(define (getMostFullInvDiagonal player greatindex greater numinvdiagonals invdiagonals result)
+  (cond
+    ((not (list? (car invdiagonals)))
+     (cond
+       ((zero? (countRowD player invdiagonals)) (append (list 'invdiagonal) (list 1 (countRow player invdiagonals) invdiagonals)))
+       (else (append (list 'invdiagonal) (list 1 0 '())))))
+    ((zero? numinvdiagonals) (append (list 'invdiagonal) (list greatindex greater) (list result)))
+    ((and (> (countRow player (getAt numinvdiagonals invdiagonals)) greater) (zero? (countRowD player(getAt numinvdiagonals invdiagonals))))
+         (getMostFullInvDiagonal player numinvdiagonals (countRow player (getAt numinvdiagonals invdiagonals)) (- numinvdiagonals 1) invdiagonals (getAt numinvdiagonals invdiagonals)))
+    (else (getMostFullInvDiagonal player greatindex greater (- numinvdiagonals 1) invdiagonals result))))
+
+
+
+
+                   
   
   

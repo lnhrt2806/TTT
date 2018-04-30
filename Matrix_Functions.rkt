@@ -433,17 +433,6 @@
           
 
 
-    
-
-
-
-
-;'(row 3 5 (X X X X X -))
-
-
-
-
-
 ;Function that returns the type, number, quantiti of tokens and line which is closest to win
 (define (getMostFullLine player matrix)
   (getMostFullLine_aux player matrix 0 '()))
@@ -514,6 +503,7 @@
 (define (checkViability_aux player1 player2 gamep1 gamep2 avaipositions matrix)
   (cond
     ((and (null? gamep1) (null? gamep2)) "gameover")
+    ((and (not (null? gamep2)) (equal? (length (getAt 5 gamep2)) 1)) (getAt 1 (getAt 5 gamep2)))  ;REVISAR SI PROGRAMA SE EMPIEZA A CAER
     ((null? gamep1) (getAt 1 (getAt 5 gamep2))) 
     ((equal? (length (getAt 5 gamep1)) 1) (getAt 1 (getAt 5 gamep1)))
     (else
@@ -531,20 +521,32 @@
     (else (append (list "No movements left to win") matrix))))
      
 ;turn 0 player, 1 computer
-(define (game player1 player2 matrix)
-  (game_aux player1 player2 matrix 1))
+(define (TTT2 numrows numcols)
+  (game_aux 'O 'X (generateMatrix numrows numcols) 0))
 
 (define (game_aux player1 player2 matrix turn)
+  
   (cond
-    ((equal? (car matrix) "No movements left to win") (pretty-print (cdr matrix) "gameover"))
+    ((equal? (car matrix) "No movements left to win") (pretty-print (cdr matrix) "Tie"))
     ((checkVictory player1 matrix) (pretty-print matrix "Player wins"))
     ((checkVictory player2 matrix) (pretty-print  matrix "Computer wins"))
     (else
-     (cond 
-       ((zero? turn) (game_aux player1 player2 (putToken player2 player1 matrix) 1))
+     (pretty-print matrix "InProgress")
+     (cond
+       ((zero? turn)
+        (define entry (playerTurn))
+        (game_aux player1 player2 (setAtMatrix (car entry) (cadr entry) player1 matrix) 1))
        (else (game_aux player1 player2 (putToken player1 player2 matrix) 0))))))
 
 
+;Function that gets the user's input
+
+(define (playerTurn)
+  (display "Input Row: ")
+  (define row (read-line))
+  (display "Input Col: ")
+  (define col (read-line))
+  (append (list (string->number row)) (list (string->number col))))
 
 ;Function that declares if an element is in a list or not
 (define (miembro ele lista)
@@ -563,17 +565,16 @@
 
 
 
-
+;Function that prints matrix
 (define (pretty-print board condition)
   (for ([i (length board)])
     (for ([j (length (car board))])
       (printf "~a\t" (list-ref (list-ref board i) j)))
     (newline))
+  (newline)
   condition)
      
 
-
-(game 'O 'X t02)
 
                   
   

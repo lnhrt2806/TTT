@@ -519,9 +519,13 @@
     ((list? (checkViability player1 player2 matrix))
      (setAtMatrix (car (checkViability player1 player2 matrix)) (cadr (checkViability player1 player2 matrix)) player2 matrix))
     (else (append (list "No movements left to win") matrix))))
-     
+
+
+
+
+
 ;turn 0 player, 1 computer
-(define (TTT2 numrows numcols)
+(define (TTT numrows numcols)
   (game_aux 'O 'X (generateMatrix numrows numcols) 0))
 
 (define (game_aux player1 player2 matrix turn)

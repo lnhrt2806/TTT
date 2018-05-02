@@ -1,0 +1,16 @@
+ 
+# DrRacket autosave files
+*~
+\#*
+.\#*
+*.bak
+
+# OS X specific directory information
+.DS_Store
+
+# KDE  specific directory information
+.directory
+
+# Compiled racket bytecode
+compiled
+

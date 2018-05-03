@@ -115,12 +115,18 @@
 
 (define t03 '((- - - - )
               (- - - X )
+              (- - O - )
+              (- - O - )
+              (- - - O )))
+
+(define t05 '((- - - - )
+              (- - - X )
               (- O - - )
-              (- - - - )
+              (O - - - )
               (- - - X )))
 
 (define t033 '((- - - X )
-               (O O O - )
+               (- - - - )
                (- - - X )
                (- - X X )))
 
@@ -424,8 +430,8 @@
        (else (getEmpPos_aux aux1 type num line (- lenline 1) numrows numcols result))))
     ((equal? type 'diagonal)
      (cond
-       ((and (equal? (getAt lenline line) '-) (> numrows numcols))
-        (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows lenline)) result)))
+       ((and (equal? (getAt lenline line) '-) (> numrows numcols));REVISAAAAAAAAAAAAAAAR
+        (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ numcols (- num 1)) lenline)) result)))
        ((and (equal? (getAt lenline line) '-) (> numcols numrows))
         (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows (+ numrows (- num 1)))) result)))
        ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
@@ -530,6 +536,8 @@
 (define (putToken player1 player2 matrix)
   (cond
     ((list? (checkViability player1 player2 matrix))
+     (print (checkViability player1 player2 matrix))
+     (newline)
      (setAtMatrix (car (checkViability player1 player2 matrix)) (cadr (checkViability player1 player2 matrix)) player2 matrix))
     (else (append (list "No movements left to win") matrix))))
 

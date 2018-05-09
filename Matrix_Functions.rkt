@@ -606,7 +606,7 @@
           ;(print entry)
           (cond
             ((miembro entry  (getAvailablePositions Matrix))
-             (set! Matrix (setAtMatrix (car entry) (cadr entry) 'X Matrix) )
+             (set! Matrix (setAtMatrix (car entry) (cadr entry) 'O Matrix) )
              (leer matriz-canvas)
              
              (cond ((not (ended?))(machine-turn))
@@ -696,7 +696,7 @@
                    [label "No events so far..."]))
 
   (define (machine-turn)
-       (set! Matrix (putToken 'X 'O Matrix))
+       (set! Matrix (putToken 'O 'X Matrix))
        (leer matriz-canvas)
        (ended?)
   )
@@ -708,12 +708,12 @@
      (pretty-print "Tie")
      (set! Enable #f) #t)
     
-    ((checkVictory 'X Matrix)
+    ((checkVictory 'O Matrix)
      (pretty-print "Player wins")
      (set! Enable #f)
      #t)
     
-    ((checkVictory 'O Matrix)
+    ((checkVictory 'X Matrix)
      (pretty-print "Computer wins")
      (set! Enable #f)
      #t)
@@ -768,4 +768,3 @@
 
 
 
-(create-gui 8 6)

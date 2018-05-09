@@ -55,6 +55,7 @@
              (X X X O - -)
              (- O - - - X)
              (O X - O X X)))
+
 (define t4 '((X X X X X X)
              (X X X X X X)
              (X X X X X X)

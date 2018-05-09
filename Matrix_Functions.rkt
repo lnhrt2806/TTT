@@ -1,4 +1,4 @@
-#lang racket
+#lang racket/gui
 
 (define tm33 '((1 2 3)
                (4 5 6)
@@ -578,6 +578,74 @@
   (newline)
   condition)
      
+
+; Make a frame by instantiating the frame% class
+(define frame (new frame% [label "Example"]))
+ 
+; Make a static text message in the frame
+(define msg (new message% [parent frame]
+                          [label "No events so far..."]))
+;Create a button matrix inside the parent component
+(define (nBM parent function matrix)
+  (button-matrix parent function matrix 0  matrix)
+  )
+
+(define (button-matrix parent function matrix j full-matrix)
+  (cond ((null? matrix)
+         '())
+        (else
+         (cons (button-matrix-aux (new horizontal-panel% [parent parent]
+                                     [alignment '(center center)])
+                            function
+                            (car matrix)
+                            j
+                            0
+                            full-matrix)
+               (button-matrix parent function  (cdr matrix) (+ j 1) full-matrix)
+               )
+         
+         )
+    )
+  )
+
+(define (button-matrix-aux parent function row   j i  full-matrix)
+  (cond ((null? row)
+         '())
+        (else
+         (cons (new button% [parent parent]
+             [label  (~a (car row))]
+             ; Callback procedure for a button click:
+             [callback (lambda (button event)
+                         ;(send msg set-label (string-append   "Button click "  (~a i) " "  (~a j) ))
+                         (function (list i j) full-matrix)
+                         )]
+             ) (button-matrix-aux parent  function  (cdr row)  (+ j 1) i full-matrix))
+         
+         )
+    )
+  )
+
+
+(define (update-buttons BM M)
+  (for-each
+   (lambda (BR R) (update-buttons-aux BR R)) BM M)
+  )
+
+(define (update-buttons-aux BR R)
+  (for-each
+   (lambda (B E) (send B set-label (~a E))) BR R )
+  )
+
+(define (player-select entry matrix)
+  (update-buttons BM (setAtMatrix (car entry) (cadr entry) 'X matrix) )
+  )
+
+
+(define BM (nBM frame player-select t3 ))
+
+;(update-buttons BM t4)
+
+(send frame show #t)
 
 
                   

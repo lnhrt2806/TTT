@@ -412,7 +412,9 @@
                   (leer matriz-canvas)
              
                   (cond ((not (ended?))
+                         (set! Enable #f)
                          (sleep/yield 0.5)
+                         (set! Enable #t)
                          (machine-turn))
                         )
                   )

@@ -4,7 +4,7 @@
 (define (generateMatrix numrows numcols)
   (cond
     (( or (>= 2 numrows) (>= 2 numcols)
-         (<= 11 numrows) (<= 11 numcols))#f)
+          (<= 11 numrows) (<= 11 numcols))#f)
     (else (generateMatrix_aux numrows numcols numcols '() '() ))))
 
 (define (generateMatrix_aux numrows numcols ininumcols row matrix)
@@ -28,9 +28,9 @@
 ;Function to set an element at a given position in a list
 (define (setAt index element mlist)
   (cond
-     (( or (> index (length mlist)) (<= index 0)) #f);validates indexes
-     ((equal? index 1) (append (list element) (cdr mlist)))
-     (else (append (list (car mlist)) (setAt (- index 1) element (cdr mlist))))))
+    (( or (> index (length mlist)) (<= index 0)) #f);validates indexes
+    ((equal? index 1) (append (list element) (cdr mlist)))
+    (else (append (list (car mlist)) (setAt (- index 1) element (cdr mlist))))))
 
 ;Functions to set an element at a given position in a matrix
 (define (setAtMatrix indexi indexj element matrix)
@@ -100,7 +100,7 @@
 (define (getInvDiagonals matrix)
   (cond
     ((equal? (length matrix) (length (car matrix))) (getSquareInvDiagonal (length matrix) 1 matrix))
-     ((>  (length (car matrix)) (length matrix)) (getNonSquareInvDiagonal (length matrix) 1 1 (length matrix) (length (car matrix)) (- (length (car matrix)) (- (length matrix) 1)) '() '() matrix))
+    ((>  (length (car matrix)) (length matrix)) (getNonSquareInvDiagonal (length matrix) 1 1 (length matrix) (length (car matrix)) (- (length (car matrix)) (- (length matrix) 1)) '() '() matrix))
     (else (getNonSquareInvDiagonal 1 (length (car matrix)) 1 (length matrix) (length (car matrix)) (- (length matrix) (- (length (car matrix))  1)) '() '() matrix))))  
 
 ;Function that gets the  inverse diagonal of a square matrix
@@ -115,7 +115,7 @@
     ((zero? numdiags) totdiag)
     ((> numcols numrows)
      (cond
-      ((equal? j (+ indexdiag numrows)) (getNonSquareInvDiagonal numrows (+ indexdiag 1) (+ indexdiag 1) numrows numcols (- numdiags 1) '() (append  totdiag (list pardiag)) matrix))
+       ((equal? j (+ indexdiag numrows)) (getNonSquareInvDiagonal numrows (+ indexdiag 1) (+ indexdiag 1) numrows numcols (- numdiags 1) '() (append  totdiag (list pardiag)) matrix))
        (else (getNonSquareInvDiagonal (- i 1) (+ j 1) indexdiag numrows numcols numdiags (append (list (getAtMatrix i j matrix)) pardiag ) totdiag matrix))))
     ((< numcols numrows)
      (cond
@@ -190,7 +190,7 @@
 
 
 (define (countRow_aux player row lengthrow result)
-    (cond
+  (cond
     ((null? row) (- lengthrow result))
     ((equal? (car row) player) (countRow_aux player (cdr row) lengthrow (+ result 1)))
     (else (countRow_aux player (cdr row) lengthrow result))))
@@ -246,16 +246,16 @@
        (else (getEmpPos_aux aux1 type num line (- lenline 1) (- numrows 1) (- numcols 1) result))))
     ((equal? type 'invdiagonal)
      (cond
-         ((and (equal? (getAt lenline line) '-) (> numrows numcols))
-          (getEmpPos_aux (+ aux1 1)  type  num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ lenline (- num 1)) aux1)) result)))
-         ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
-          (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline aux1)) result)))         
-         ((and (equal? (getAt lenline line) '-) (> numcols numrows))
-          (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows num)) result)))
-         (else
-          (cond
-            ((or (> numrows numcols) (equal? numrows numcols)) (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) result))
-            (else (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) result))))))))
+       ((and (equal? (getAt lenline line) '-) (> numrows numcols))
+        (getEmpPos_aux (+ aux1 1)  type  num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list (+ lenline (- num 1)) aux1)) result)))
+       ((and (equal? (getAt lenline line) '-) (equal? numrows numcols))
+        (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list lenline aux1)) result)))         
+       ((and (equal? (getAt lenline line) '-) (> numcols numrows))
+        (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) (append (list (list numrows num)) result)))
+       (else
+        (cond
+          ((or (> numrows numcols) (equal? numrows numcols)) (getEmpPos_aux (+ aux1 1) type num line (- lenline 1) (- numrows 1) (- numcols 1) result))
+          (else (getEmpPos_aux (+ aux1 1) type (+ num 1) line (- lenline 1) (- numrows 1) (- numcols 1) result))))))))
           
 
 
@@ -263,20 +263,20 @@
 (define (getMostFullLine player matrix)
   (getMostFullLine_aux player matrix 11 '()))
 
- (define (getMostFullLine_aux player matrix greater result)
-   (cond
-     ((< (getAt 3 (getMostFullRow player  1 11 (length matrix) matrix '())) greater)
-      (getMostFullLine_aux player matrix (getAt 3 (getMostFullRow player  1 11 (length matrix) matrix '())) (getMostFullRow player  1 11 (length matrix) matrix '())))
-     ((< (getAt 3 (getMostFullColumn player 1 11 (length (car matrix)) matrix '())) greater)
-      (getMostFullLine_aux player matrix (getAt 3 (getMostFullColumn player 1 11 (length (car matrix)) matrix '())) (getMostFullColumn player 1 11 (length (car matrix)) matrix '())))
-     ((< (getAt 3 (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '()))  greater)
-      (getMostFullLine_aux player matrix (getAt 3 (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '())) (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '()))) 
-     ((< (getAt 3 (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) greater)
-      (getMostFullLine_aux player matrix (getAt 3 (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())))
-     (else
-      (cond
-        ((null? result) result)
-        (else (append result (list (getEmpPos result matrix))))))))
+(define (getMostFullLine_aux player matrix greater result)
+  (cond
+    ((< (getAt 3 (getMostFullRow player  1 11 (length matrix) matrix '())) greater)
+     (getMostFullLine_aux player matrix (getAt 3 (getMostFullRow player  1 11 (length matrix) matrix '())) (getMostFullRow player  1 11 (length matrix) matrix '())))
+    ((< (getAt 3 (getMostFullColumn player 1 11 (length (car matrix)) matrix '())) greater)
+     (getMostFullLine_aux player matrix (getAt 3 (getMostFullColumn player 1 11 (length (car matrix)) matrix '())) (getMostFullColumn player 1 11 (length (car matrix)) matrix '())))
+    ((< (getAt 3 (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '()))  greater)
+     (getMostFullLine_aux player matrix (getAt 3 (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '())) (getMostFullDiagonal player 1 11 (length (getDiagonals matrix)) (getDiagonals matrix) '()))) 
+    ((< (getAt 3 (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) greater)
+     (getMostFullLine_aux player matrix (getAt 3 (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())) (getMostFullInvDiagonal player 1 11 (length (getInvDiagonals matrix)) (getInvDiagonals matrix) '())))
+    (else
+     (cond
+       ((null? result) result)
+       (else (append result (list (getEmpPos result matrix))))))))
   
 
 
@@ -285,7 +285,7 @@
   (cond
     ((zero? numrows) (append (list 'row) (list greatindex greater) (list result))) 
     ((and (< (countRow player (getAt numrows matrix)) greater) (zero? (countRowD player (getAt numrows matrix))))
-          (getMostFullRow player numrows (countRow player (getAt numrows matrix)) (- numrows 1) matrix (getAt numrows matrix)))
+     (getMostFullRow player numrows (countRow player (getAt numrows matrix)) (- numrows 1) matrix (getAt numrows matrix)))
     (else (getMostFullRow player greatindex greater (- numrows 1) matrix result))))
 
 
@@ -294,7 +294,7 @@
   (cond
     ((zero? numcols) (append (list 'column) (list greatindex greater) (list result))) 
     ((and (< (countRow player (getColumn numcols matrix)) greater) (zero? (countRowD player (getColumn numcols matrix))))
-          (getMostFullColumn player numcols (countRow player (getColumn numcols matrix)) (- numcols 1) matrix (getColumn numcols matrix)))
+     (getMostFullColumn player numcols (countRow player (getColumn numcols matrix)) (- numcols 1) matrix (getColumn numcols matrix)))
     (else (getMostFullColumn player greatindex greater (- numcols 1) matrix result))))
 
 ;Function that returns the type, number of diagonal (from left to right, up to down), quantity of tokens and diagonal where there is more chance to win
@@ -318,7 +318,7 @@
        (else (append (list 'invdiagonal) (list 1 11 '())))))
     ((zero? numinvdiagonals) (append (list 'invdiagonal) (list greatindex greater) (list result)))
     ((and (< (countRow player (getAt numinvdiagonals invdiagonals)) greater) (zero? (countRowD player(getAt numinvdiagonals invdiagonals))))
-         (getMostFullInvDiagonal player numinvdiagonals (countRow player (getAt numinvdiagonals invdiagonals)) (- numinvdiagonals 1) invdiagonals (getAt numinvdiagonals invdiagonals)))
+     (getMostFullInvDiagonal player numinvdiagonals (countRow player (getAt numinvdiagonals invdiagonals)) (- numinvdiagonals 1) invdiagonals (getAt numinvdiagonals invdiagonals)))
     (else (getMostFullInvDiagonal player greatindex greater (- numinvdiagonals 1) invdiagonals result))))
 
 ;Function that checks viability to put a token in certain place
@@ -376,19 +376,18 @@
 
 
 
-
-;####################################################################################################################################################################
-; Make a frame by instantiating the frame% class
+;Función a llamar para que empiece el juego
 (define (TTT rows cols)
+  ;Se crea la ventana donde se va a crear el juego
   (define frame (new frame% [label "TTT"]
                      [width (* 100 cols)]
                      [height (* 100 rows)]))
-
+  ;Panel vertical que va a contener las filas
   (define row-container (new vertical-panel%	 
                              [parent frame]))
   
 
-
+  ;Función que crea las filas (panel horizontal) en el contenedor, y las devuelve como una lista
   ; empezar en row 1
   (define (create-rows row rows)
     (cond ( (> row rows) '())
@@ -399,32 +398,30 @@
   
   (define row-list (create-rows 1 rows))
   
-  ; Derive a new canvas (a drawing window) class to handle events
+  ;Canvas con el override que se encarga de manejar los eventos del mouse
   (define my-canvas%
-    (class canvas% ; The base class is canvas%
-      ; Define overriding method to handle mouse events
-    (define/override (on-event event)
-      (cond ((and (send event button-down?) Enable)
-          (send msg set-label (send this get-label))
-          (define entry (eval (read (open-input-string (send this get-label))) ))
-          ;(print entry)
-          (cond
-            ((miembro entry  (getAvailablePositions Matrix))
-             (set! Matrix (setAtMatrix (car entry) (cadr entry) 'O Matrix) )
-             (leer matriz-canvas)
+    (class canvas% ; La clase base es canvas%
+      (define/override (on-event event)
+        (cond ((and (send event button-down?) Enable)
+               (define entry (eval (read (open-input-string (send this get-label))) ))
+               ;(print entry)
+               (cond
+                 ((miembro entry  (getAvailablePositions Matrix))
+                  (set! Matrix (setAtMatrix (car entry) (cadr entry) 'O Matrix) )
+
+                  (leer matriz-canvas)
              
-             (cond ((not (ended?))(machine-turn))
-                   )
-             )
-             (else (print "Posicion ocupada"))
+                  (cond ((not (ended?))
+                         (sleep/yield 0.5)
+                         (machine-turn))
+                        )
+                  )
+                 (else (print "Posicion ocupada"))
+                 ))
               ))
-      ))
-      ; Define overriding method to handle keyboard events
-      (define/override (on-char event)
-        (send msg set-label "Canvas keyboard"))
-      ; Call the superclass init, passing on all init args
       (super-new)))
   
+  ;Función que devuelve una matriz con todos los canvases creados
   (define (create-cols col cols row newrow rowl)
     (cond ((null? rowl) '())
           ((<= col cols) (create-cols (+ col 1) cols row (append newrow (list (new my-canvas%
@@ -442,29 +439,190 @@
 
   (define matriz-canvas (create-cols 1 cols 1 '() row-list))
 
+  (define primer-canvas (caar matriz-canvas))
 
 
-  ; Make some pens and brushes
+
+  ; Hacemos pens y brushes
   (define no-pen (make-object pen% "BLACK" 1 'transparent))
   (define no-brush (make-object brush% "BLACK" 'transparent))
-  (define red-pen (make-object pen% "RED" 2 'solid))
-  (define blue-pen (make-object pen% "BLUE" 2 'solid))
+  (define red-pen (make-object pen% "RED" 3 'solid))
+  (define red-pen-dash (make-object pen% "RED" 3 'short-dash))
+  (define blue-pen (make-object pen% "BLUE" 3 'solid))
+  (define blue-pen-dash (make-object pen% "BLUE" 3 'dot-dash))
   
-  ; Define a procedure to draw a face
+  ; Dibuja una x
   (define (draw-x dc)
     (send dc set-pen blue-pen)
     (send dc set-brush no-brush)
     (send dc draw-line 20 20 80 80)
     (send dc draw-line 80 20 20 80))
 
-
+  ;Dibuja un O
   (define (draw-o dc)
     (send dc set-brush no-brush)
     (send dc set-pen red-pen)
     (send dc draw-ellipse 20 20 60 60))
-  
+  ;Se limpia el canvas
   (define (clear dc)
     (send dc clear))
+
+  (define (one-row rowl)
+    (cond ((null? (cdr rowl)) (set! row-list (list(car row-list)))
+                              (set! matriz-canvas (list (car matriz-canvas))))
+          (else (send row-container delete-child (cadr rowl))
+                (one-row (cdr rowl)))))
+
+  (define (one-col canl)
+    (cond ((null? (cdr canl)))
+          (else (send (car row-list) delete-child (cadr canl))
+                (one-col (cdr canl)))))
+
+  (define (one-canvas)
+    (send frame delete-child row-container)
+
+    (define can (new my-canvas%
+                     [parent frame]
+                     [style '(border)]
+                     [min-width (* 100 cols)]	 
+                     [min-height (* 100 rows)]	 
+                     [stretchable-width #F]	 
+                     [stretchable-height #F]))
+    
+    (set! primer-canvas can))
+
+
+  (define (victory dc height width)
+    (send dc set-brush no-brush)
+    (send dc set-pen red-pen-dash)
+    (send dc draw-line (* 0.1 width) (* 0.1 height) (* 0.2 width) (* 0.25 height))
+    (send dc draw-line (* 0.3 width) (* 0.1 height) (* 0.2 width) (* 0.25 height))
+    (send dc draw-line (* 0.2 width) (* 0.4 height) (* 0.2 width) (* 0.25 height))
+    (sleep/yield 0.25)
+    (send dc draw-ellipse (* 0.35 width) (* 0.1 height) (* 0.3 width) (* 0.3 height))
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.7 width) (* 0.1 height) (* 0.7 width) (* 0.35 height))
+    (send dc draw-line (* 0.9 width) (* 0.35 height) (* 0.825 width) (* 0.4 height))
+    (send dc draw-line (* 0.775 width) (* 0.4 height) (* 0.825 width) (* 0.4 height))
+    (send dc draw-line (* 0.7 width) (* 0.35 height) (* 0.775 width) (* 0.4 height))
+    (send dc draw-line (* 0.9 width) (* 0.1 height) (* 0.9 width) (* 0.35 height))
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.05 width) (* 0.5 height) (* 0.15 width) (* 0.8 height))
+    (send dc draw-line (* 0.15 width) (* 0.8 height) (* 0.2 width) (* 0.65 height))
+    (send dc draw-line (* 0.2 width) (* 0.65 height) (* 0.25 width) (* 0.8 height))
+    (send dc draw-line (* 0.25 width) (* 0.8 height) (* 0.35 width) (* 0.5 height))
+    (sleep/yield 0.25)
+    (send dc draw-ellipse (* 0.35 width) (* 0.5 height) (* 0.3 width) (* 0.3 height))
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.7 width) (* 0.8 height))
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (victory-aux dc height width 0)
+    )
+  (define (victory-aux dc height width i)
+    (sleep/yield 0.25)
+    (send dc clear)
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.1 width) (* 0.1 height) (* 0.2 width) (* 0.25 height))
+    (send dc draw-line (* 0.3 width) (* 0.1 height) (* 0.2 width) (* 0.25 height))
+    (send dc draw-line (* 0.2 width) (* 0.4 height) (* 0.2 width) (* 0.25 height))
+
+    (send dc draw-ellipse (* 0.35 width) (* 0.1 height) (* 0.3 width) (* 0.3 height))
+
+    (send dc draw-line (* 0.7 width) (* 0.1 height) (* 0.7 width) (* 0.35 height))
+    (send dc draw-line (* 0.9 width) (* 0.35 height) (* 0.825 width) (* 0.4 height))
+    (send dc draw-line (* 0.775 width) (* 0.4 height) (* 0.825 width) (* 0.4 height))
+    (send dc draw-line (* 0.7 width) (* 0.35 height) (* 0.775 width) (* 0.4 height))
+    (send dc draw-line (* 0.9 width) (* 0.1 height) (* 0.9 width) (* 0.35 height))
+
+    (send dc draw-line (* 0.05 width) (* 0.5 height) (* 0.15 width) (* 0.8 height))
+    (send dc draw-line (* 0.15 width) (* 0.8 height) (* 0.2 width) (* 0.65 height))
+    (send dc draw-line (* 0.2 width) (* 0.65 height) (* 0.25 width) (* 0.8 height))
+    (send dc draw-line (* 0.25 width) (* 0.8 height) (* 0.35 width) (* 0.5 height))
+
+    (send dc draw-ellipse (* 0.35 width) (* 0.5 height) (* 0.3 width) (* 0.3 height))
+
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.7 width) (* 0.8 height))
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (cond ((< i 5)
+    (victory-aux dc height width (+ 1 i))))
+    )
+;Animación cuando el jugador pierde
+  (define (defeat dc height width)
+    (send dc set-brush no-brush)
+    (send dc set-pen blue-pen-dash)
+    ;P
+    (send dc draw-line (* 0.325 width) (* 0.1 height) (* 0.325 width) (* 0.4 height))
+    (send dc draw-line (* 0.325 width) (* 0.1 height) (* 0.4 width) (* 0.1 height))
+    (send dc draw-line (* 0.4 width) (* 0.1 height) (* 0.45 width) (* 0.15 height))
+    (send dc draw-line (* 0.45 width) (* 0.15 height) (* 0.45 width) (* 0.2 height))
+    (send dc draw-line (* 0.45 width) (* 0.2 height) (* 0.4 width) (* 0.25 height))
+    (send dc draw-line (* 0.4 width) (* 0.25 height) (* 0.325 width) (* 0.25 height))
+
+    (sleep/yield 0.25)
+    ;C
+    (send dc draw-line (* 0.675 width) (* 0.1 height) (* 0.625 width) (* 0.1 height))
+    (send dc draw-line (* 0.625 width) (* 0.1 height) (* 0.575 width) (* 0.125 height))
+    (send dc draw-line (* 0.575 width) (* 0.125 height) (* 0.55 width) (* 0.15 height))
+    (send dc draw-line (* 0.55 width) (* 0.15 height) (* 0.525 width) (* 0.2 height))
+    (send dc draw-line (* 0.525 width) (* 0.2 height) (* 0.525 width) (* 0.3 height))
+    (send dc draw-line (* 0.525 width) (* 0.3 height) (* 0.55 width) (* 0.35 height))
+    (send dc draw-line (* 0.55 width) (* 0.35 height) (* 0.575 width) (* 0.375 height))
+    (send dc draw-line (* 0.575 width) (* 0.375 height) (* 0.625 width) (* 0.4 height))
+    (send dc draw-line (* 0.625 width) (* 0.4 height) (* 0.675 width) (* 0.4 height))
+    (sleep/yield 0.25)
+    ;W
+    (send dc draw-line (* 0.05 width) (* 0.5 height) (* 0.15 width) (* 0.8 height))
+    (send dc draw-line (* 0.15 width) (* 0.8 height) (* 0.2 width) (* 0.65 height))
+    (send dc draw-line (* 0.2 width) (* 0.65 height) (* 0.25 width) (* 0.8 height))
+    (send dc draw-line (* 0.25 width) (* 0.8 height) (* 0.35 width) (* 0.5 height))
+    (sleep/yield 0.25)
+    ;O
+    (send dc draw-ellipse (* 0.35 width) (* 0.5 height) (* 0.3 width) (* 0.3 height))
+    (sleep/yield 0.25)
+    ;N
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.7 width) (* 0.8 height))
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (defeat-aux dc height width 0)
+    )
+
+  (define (defeat-aux dc height width i)
+    (sleep/yield 0.25)
+    (send dc clear)
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.325 width) (* 0.1 height) (* 0.325 width) (* 0.4 height))
+    (send dc draw-line (* 0.325 width) (* 0.1 height) (* 0.4 width) (* 0.1 height))
+    (send dc draw-line (* 0.4 width) (* 0.1 height) (* 0.45 width) (* 0.15 height))
+    (send dc draw-line (* 0.45 width) (* 0.15 height) (* 0.45 width) (* 0.2 height))
+    (send dc draw-line (* 0.45 width) (* 0.2 height) (* 0.4 width) (* 0.25 height))
+    (send dc draw-line (* 0.4 width) (* 0.25 height) (* 0.325 width) (* 0.25 height))
+
+    (send dc draw-line (* 0.675 width) (* 0.1 height) (* 0.625 width) (* 0.1 height))
+    (send dc draw-line (* 0.625 width) (* 0.1 height) (* 0.575 width) (* 0.125 height))
+    (send dc draw-line (* 0.575 width) (* 0.125 height) (* 0.55 width) (* 0.15 height))
+    (send dc draw-line (* 0.55 width) (* 0.15 height) (* 0.525 width) (* 0.2 height))
+    (send dc draw-line (* 0.525 width) (* 0.2 height) (* 0.525 width) (* 0.3 height))
+    (send dc draw-line (* 0.525 width) (* 0.3 height) (* 0.55 width) (* 0.35 height))
+    (send dc draw-line (* 0.55 width) (* 0.35 height) (* 0.575 width) (* 0.375 height))
+    (send dc draw-line (* 0.575 width) (* 0.375 height) (* 0.625 width) (* 0.4 height))
+    (send dc draw-line (* 0.625 width) (* 0.4 height) (* 0.675 width) (* 0.4 height))
+
+    (send dc draw-line (* 0.05 width) (* 0.5 height) (* 0.15 width) (* 0.8 height))
+    (send dc draw-line (* 0.15 width) (* 0.8 height) (* 0.2 width) (* 0.65 height))
+    (send dc draw-line (* 0.2 width) (* 0.65 height) (* 0.25 width) (* 0.8 height))
+    (send dc draw-line (* 0.25 width) (* 0.8 height) (* 0.35 width) (* 0.5 height))
+
+    (send dc draw-ellipse (* 0.35 width) (* 0.5 height) (* 0.3 width) (* 0.3 height))
+
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.7 width) (* 0.8 height))
+    (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
+    (cond ((< i 5)
+    (defeat-aux dc height width (+ 1 i))))
+    )
+    
 
   (define (leer matrizc)
     
@@ -484,7 +642,7 @@
   (define (leer-aux row rowc)
     (for-each
      (lambda (ele can) (change ele can)) row rowc
-    ))
+     ))
 
   (define (change ele can)
     (cond ((equal? ele 'X)
@@ -493,37 +651,44 @@
           ((equal? ele 'O)
            (clear (send can get-dc))
            (draw-o (send can get-dc)))
-          (else (clear (send can get-dc)))))  
+          (else (clear (send can get-dc)))
+          ))  
 
-  ; Make a static text message in the frame
-  (define msg (new message% [parent frame]
-                   [label "No events so far..."]))
+
 
   (define (machine-turn)
-       (set! Matrix (putToken 'O 'X Matrix))
-       (leer matriz-canvas)
-       (ended?)
-  )
+    (set! Matrix (putToken 'O 'X Matrix))
+    (leer matriz-canvas)
+    (ended?)
+    )
   
   (define (ended?)
     (cond
       
-    ((equal? (car Matrix) "No movements left to win")
-     (pretty-print "Tie")
-     (set! Enable #f) #t)
+      ((equal? (car Matrix) "No movements left to win")
+       (pretty-print "Tie")
+       (set! Enable #f) #t)
     
-    ((checkVictory 'O Matrix)
-     (pretty-print "Player wins")
-     (set! Enable #f)
-     #t)
+      ((checkVictory 'O Matrix)
+       (pretty-print "Player wins")
+       (sleep/yield 0.5)
+       (one-canvas)
+       (sleep/yield 0.25)
+       (victory (send primer-canvas get-dc) (* 100 rows) (* 100 cols))
+       (set! Enable #f)
+       #t)
     
-    ((checkVictory 'X Matrix)
-     (pretty-print "Computer wins")
-     (set! Enable #f)
-     #t)
-    (else
-     #f)
-    )
+      ((checkVictory 'X Matrix)
+       (pretty-print "Computer wins")
+       (sleep/yield 0.5)
+       (one-canvas)
+       (sleep/yield 0.25)
+       (defeat (send primer-canvas get-dc) (* 100 rows) (* 100 cols))
+       (set! Enable #f)
+       #t)
+      (else
+       #f)
+      )
     )
   (send frame show #t)
   
@@ -537,7 +702,7 @@
 ;#############################################################################################################################
 
 
- ;turn 0 player, 1 computer
+;turn 0 player, 1 computer
 (define (TTT_aux numrows numcols)
   (game_aux 'O 'X (generateMatrix numrows numcols) 0))
 

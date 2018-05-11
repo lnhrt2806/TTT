@@ -86,7 +86,7 @@
   (define (leer-aux row rowc)
     (for-each
      (lambda (ele can) (change ele can)) row rowc
-    ))
+     ))
 
   (define (change ele can)
     (cond ((equal? ele 'X)
@@ -113,16 +113,27 @@
   (set! tmx   '((X - O)
                 (O X -)
                 (- O X)))
+  (sleep/yield 1 )
+
+  (draw-o (send (caar matriz-canvas) get-dc))
   (sleep/yield 1)
+
+  (leer tmx matriz-canvas)
   
-  (leer tmx matriz-canvas)
-
   (sleep/yield 1)
 
-  (set! tmx   '((O - O)
-                (O - -)
-                (X O -)))
- 
-  (leer tmx matriz-canvas)
+  (send frame delete-child row-container)
 
-  )
+  
+  (define can (new my-canvas%
+       [parent frame]
+       [style '(border)]
+       [label "caca"]
+       [min-width (* 100 cols)]	 
+       [min-height (* 100 rows)]	 
+       [stretchable-width #F]	 
+       [stretchable-height #F]))
+  (sleep/yield 1)
+  (draw-o (send can get-dc))
+  
+)

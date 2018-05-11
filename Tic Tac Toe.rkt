@@ -456,7 +456,7 @@
   (define red-pen-dash (make-object pen% "RED" 3 'short-dash))
   (define blue-pen (make-object pen% "BLUE" 3 'solid))
   (define blue-pen-dash (make-object pen% "BLUE" 3 'dot-dash))
-  (define hilite-pen (make-object pen% "BLUE" 3 'long-dash))
+  (define hilite-pen (make-object pen% "PURPLE" 3 'long-dash))
   
   ; Dibuja una x
   (define (draw-x dc)

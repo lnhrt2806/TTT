@@ -375,13 +375,17 @@
 
 
 
-
+;################################################
+;################  Interfaz  ####################
+;################################################
 ;Función a llamar para que empiece el juego
 (define (TTT rows cols)
   ;Se crea la ventana donde se va a crear el juego
   (define frame (new frame% [label "TTT"]
                      [width (* 100 cols)]
-                     [height (* 100 rows)]))
+                     [height (* 100 rows)]
+                     [stretchable-width #F]	 
+                     [stretchable-height #F]))
   ;Panel vertical que va a contener las filas
   (define row-container (new vertical-panel%	 
                              [parent frame]))
@@ -394,7 +398,7 @@
           (else (append (list (new horizontal-panel%	 
                                    [parent row-container]	 
                                    [min-height 100]
-                                   [stretchable-height #T])) (create-rows (+ 1 row) rows)))))
+                                   [stretchable-height #F])) (create-rows (+ 1 row) rows)))))
   
   (define row-list (create-rows 1 rows))
   
@@ -452,6 +456,7 @@
   (define red-pen-dash (make-object pen% "RED" 3 'short-dash))
   (define blue-pen (make-object pen% "BLUE" 3 'solid))
   (define blue-pen-dash (make-object pen% "BLUE" 3 'dot-dash))
+  (define hilite-pen (make-object pen% "BLUE" 3 'long-dash))
   
   ; Dibuja una x
   (define (draw-x dc)
@@ -483,7 +488,7 @@
   (define (one-canvas)
     (send frame delete-child row-container)
 
-    (define can (new my-canvas%
+    (define can (new canvas%
                      [parent frame]
                      [style '(border)]
                      [min-width (* 100 cols)]	 
@@ -493,7 +498,7 @@
     
     (set! primer-canvas can))
 
-
+  ;Animaciøn de gane
   (define (victory dc height width)
     (send dc set-brush no-brush)
     (send dc set-pen red-pen-dash)
@@ -521,6 +526,7 @@
     (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (victory-aux dc height width 0)
     )
+  ;Blinking de la animación
   (define (victory-aux dc height width i)
     (sleep/yield 0.25)
     (send dc clear)
@@ -548,9 +554,9 @@
     (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (cond ((< i 5)
-    (victory-aux dc height width (+ 1 i))))
+           (victory-aux dc height width (+ 1 i))))
     )
-;Animación cuando el jugador pierde
+  ;Animación cuando el jugador pierde
   (define (defeat dc height width)
     (send dc set-brush no-brush)
     (send dc set-pen blue-pen-dash)
@@ -589,7 +595,7 @@
     (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (defeat-aux dc height width 0)
     )
-
+  ;Blinking de la animación
   (define (defeat-aux dc height width i)
     (sleep/yield 0.25)
     (send dc clear)
@@ -622,10 +628,50 @@
     (send dc draw-line (* 0.7 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (send dc draw-line (* 0.9 width) (* 0.5 height) (* 0.9 width) (* 0.8 height))
     (cond ((< i 5)
-    (defeat-aux dc height width (+ 1 i))))
+           (defeat-aux dc height width (+ 1 i))))
+    )
+
+  ;Animación de empate
+  (define (tie dc height width)
+    (send dc set-brush no-brush)
+    (send dc set-pen hilite-pen)
+    (send dc draw-line (* 0.1 width) (* 0.2 height) (* 0.4 width) (* 0.2 height))
+    (send dc draw-line (* 0.25 width) (* 0.2 height) (* 0.25 width) (* 0.8 height))
+
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.5 width) (* 0.2 height) (* 0.5 width) (* 0.8 height))
+
+
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.6 width) (* 0.2 height) (* 0.6 width) (* 0.8 height))
+    (send dc draw-line (* 0.6 width) (* 0.2 height) (* 0.9 width) (* 0.2 height))
+    (send dc draw-line (* 0.6 width) (* 0.5 height) (* 0.8 width) (* 0.5 height))
+    (send dc draw-line (* 0.6 width) (* 0.8 height) (* 0.9 width) (* 0.8 height))
+
+
+    (tie-aux dc height width 0)
+    )
+  ;Blinking
+  (define (tie-aux dc height width i)
+    (sleep/yield 0.25)
+    (send dc clear)
+    (sleep/yield 0.25)
+    (send dc draw-line (* 0.1 width) (* 0.2 height) (* 0.4 width) (* 0.2 height))
+    (send dc draw-line (* 0.25 width) (* 0.2 height) (* 0.25 width) (* 0.8 height))
+
+    (send dc draw-line (* 0.5 width) (* 0.2 height) (* 0.5 width) (* 0.8 height))
+
+    (send dc draw-line (* 0.6 width) (* 0.2 height) (* 0.6 width) (* 0.8 height))
+    (send dc draw-line (* 0.6 width) (* 0.2 height) (* 0.9 width) (* 0.2 height))
+    (send dc draw-line (* 0.6 width) (* 0.5 height) (* 0.8 width) (* 0.5 height))
+    (send dc draw-line (* 0.6 width) (* 0.8 height) (* 0.9 width) (* 0.8 height))
+
+
+    (cond ((< i 5)
+           (tie-aux dc height width (+ 1 i))))
     )
     
-
+  ;Recorre la matriz y coloca en los lugares el simbolo que corresponde
   (define (leer matrizc)
     
     (cond ((equal? (car Matrix) "No movements left to win")
@@ -645,7 +691,7 @@
     (for-each
      (lambda (ele can) (change ele can)) row rowc
      ))
-
+  ;Cambia lo que haya en un canvas por el simbolo
   (define (change ele can)
     (cond ((equal? ele 'X)
            (clear (send can get-dc))
@@ -657,18 +703,22 @@
           ))  
 
 
-
+  ;verifica si es el turno del pc
   (define (machine-turn)
     (set! Matrix (putToken 'O 'X Matrix))
     (leer matriz-canvas)
     (ended?)
     )
-  
+  ;Verifica si el juego ha terminado
   (define (ended?)
     (cond
       
       ((equal? (car Matrix) "No movements left to win")
        (pretty-print "Tie")
+       (sleep/yield 0.5)
+       (one-canvas)
+       (sleep/yield 0.25)
+       (tie (send primer-canvas get-dc) (* 100 rows) (* 100 cols))
        (set! Enable #f) #t)
     
       ((checkVictory 'O Matrix)
